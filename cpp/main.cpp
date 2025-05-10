@@ -11,17 +11,17 @@ typedef int (*add_fn)(int, int);
 int main()
 {
 #ifdef _WIN32
-	HINSTANCE rust_lib = LoadLibraryA("rsa-lib/target/release/rsa_lib.dll");
+	HINSTANCE rust_lib = LoadLibraryA("librsa.dll");
 	if (!rust_lib)
 	{
-		std::cerr << "Error loading rsa-lib/target/release/rsa_lib.dll" << std::endl;
+		std::cerr << "Error loading librsa.dll" << std::endl;
 		return 1;
 	}
 #else
-	void *rust_lib = dlopen("./rsa-lib/target/release/librsa_lib.so", RTLD_NOW);
+	void *rust_lib = dlopen("./librsa.so", RTLD_NOW);
 	if (!rust_lib)
 	{
-		std::cerr << "Error loading ./rsa-lib/target/release/librsa_lib.so: " << dlerror() << std::endl;
+		std::cerr << "Error loading ./librsa.so: " << dlerror() << std::endl;
 		return 1;
 	}
 #endif
@@ -44,8 +44,8 @@ int main()
 		return 1;
 	}
 
-	int num1 = 10;
-	int num2 = 5;
+	int num1 = 20;
+	int num2 = 7;
 	int result = rust_add(num1, num2);
 
 	std::cout << "Result from Rust add function: " << num1 << " + " << num2 << " = " << result << std::endl;
