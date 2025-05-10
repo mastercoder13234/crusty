@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.15)
+project(MixedLang)
+
+# Find the Rust compiler
+find_program(RUSTC_EXECUTABLE rustc REQUIRED)
+find_program(CARGO_EXECUTABLE cargo REQUIRED)
+
+# Determine the target library name based on the OS
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set(RUST_LIB_NAME "librsa_lib.so")
+elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    set(RUST_LIB_NAME "librsa_lib.dylib")
+elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    set(RUST_LIB_NAME "rsa_lib.dll")
+endif()
+
+# Build the Rust library using Cargo
+add_custom_target(rust_lib_build
+    COMMAND ${CARGO_EXECUTABLE} build --release --crate-type cdylib
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rsa-lib
+    OUTPUT ${CMAKE_SOURCE_DIR}/rsa-lib/target/release/${RUST_LIB_NAME}
+)
+
+# Create a variable for the Rust library output path
+set(RUST_LIB_OUTPUT "${CMAKE_SOURCE_DIR}/rsa-lib/target/release/${RUST_LIB_NAME}")
+
+# Add the C++ executable
+add_executable(crusty cpp-cli/main.cpp)
+
+# Link the C++ executable against the Rust library
+target_link_libraries(crusty PRIVATE ${RUST_LIB_OUTPUT})
+
+# Ensure the Rust library is built before the C++ executable is linked
+add_dependencies(crusty rust_lib_build)
+
+# (Optional) Add a target to build everything
+add_custom_target(all_build
+    DEPENDS crusty rust_lib_build
+)

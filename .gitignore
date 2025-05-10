@@ -1,0 +1,40 @@
+# Rust
+target
+Cargo.lock
+
+# C++ Build Artifacts (CMake)
+build
+CMakeCache.txt
+CMakeFiles
+Makefile
+*.cmake
+*.vcxproj
+*.sln
+*.user
+*.filters
+*.ipr
+*.iws
+
+# Executables
+/cli_cpp
+/c_caller
+/cpp_caller
+/rsa16_caller
+/crusty
+
+# Dynamic Libraries (OS Specific - might be redundant with target/release)
+*.so
+*.dylib
+*.dll
+
+# Editor and IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.bak
+
+# OS Specific
+.DS_Store
+Thumbs.db
