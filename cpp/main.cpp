@@ -1,46 +1,18 @@
 #include <iostream>
-
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <dlfcn.h>
-#endif
-
-typedef int (*add_fn)(int, int);
+#include "bindings.h"
 
 int main()
 {
-#ifdef _WIN32
-	HINSTANCE rust_lib = LoadLibraryA("librsa.dll");
+	void *rust_lib = load_rust_library();
 	if (!rust_lib)
 	{
-		std::cerr << "Error loading librsa.dll" << std::endl;
 		return 1;
 	}
-#else
-	void *rust_lib = dlopen("./librsa.so", RTLD_NOW);
-	if (!rust_lib)
-	{
-		std::cerr << "Error loading ./librsa.so: " << dlerror() << std::endl;
-		return 1;
-	}
-#endif
 
-	add_fn rust_add = (add_fn)
-#ifdef _WIN32
-		GetProcAddress(rust_lib, "add");
-#else
-		dlsym(rust_lib, "add");
-#endif
-
+	add_fn rust_add = get_rust_add_function(rust_lib);
 	if (!rust_add)
 	{
-		std::cerr << "Error getting function pointer to 'add'" << std::endl;
-#ifdef _WIN32
-		FreeLibrary(rust_lib);
-#else
-		dlclose(rust_lib);
-#endif
+		unload_rust_library(rust_lib);
 		return 1;
 	}
 
@@ -50,11 +22,7 @@ int main()
 
 	std::cout << "Result from Rust add function: " << num1 << " + " << num2 << " = " << result << std::endl;
 
-#ifdef _WIN32
-	FreeLibrary(rust_lib);
-#else
-	dlclose(rust_lib);
-#endif
+	unload_rust_library(rust_lib);
 
 	return 0;
 }
