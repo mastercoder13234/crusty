@@ -10,8 +10,9 @@ ifeq ($(shell uname -s),Darwin)
 endif
 RUST_LIB_NAME = $(RUST_LIB_NAME_PREFIX)rsa.$(RUST_LIB_EXTENSION)
 RUST_BUILD_DIR = . # Build Rust lib in the base dir
+BINDINGS_HEADER = cpp/bindings.h
 
-CPP_SOURCES = cpp/main.cpp cpp/bindings.cpp
+CPP_SOURCES = cpp/main.cpp cpp/libload.cpp
 CPP_OBJECTS = $(CPP_SOURCES:.cpp=.o)
 CPP_EXECUTABLE = crusty
 CXX = g++
@@ -19,20 +20,23 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -fPIC
 
 all: $(CPP_EXECUTABLE)
 
+$(BINDINGS_HEADER): $(RUST_SRC)
+	cbindgen --output $(BINDINGS_HEADER) --cpp-compat $(RUST_SRC)
+
 $(RUST_LIB_NAME): $(RUST_SRC)
 	rustc --crate-type cdylib -o $@ $<
 
-$(CPP_EXECUTABLE): $(CPP_OBJECTS) $(RUST_LIB_NAME)
+$(CPP_EXECUTABLE): $(CPP_OBJECTS) $(RUST_LIB_NAME) $(BINDINGS_HEADER)
 	$(CXX) $(CPP_OBJECTS) -o $@ -L. -lrsa
 
-%.o: %.cpp
+%.o: %.cpp $(BINDINGS_HEADER)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-cpp/%.o: cpp/%.cpp cpp/bindings.h
+cpp/%.o: cpp/%.cpp cpp/libload.h $(BINDINGS_HEADER)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -r *.o *.a *.dll
+	rm -r cpp/*.o *.a *.dll $(BINDINGS_HEADER)
 
 run: $(CPP_EXECUTABLE)
 	./$(CPP_EXECUTABLE)

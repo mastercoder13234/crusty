@@ -6,3 +6,6 @@
 *.a
 *.exe
 crusty
+
+# IDE Stuff
+.vscode

@@ -1,28 +1,31 @@
 #include <iostream>
+#include "libload.h"
 #include "bindings.h"
+#include <cstdint>
 
 int main()
 {
-	void *rust_lib = load_rust_library();
+	const char *lib_path =
+#ifdef _WIN32
+		"rsa.dll";
+#else
+		"./librsa.so";
+#endif
+
+	lib_handle_t rust_lib = getlib(lib_path);
 	if (!rust_lib)
 	{
 		return 1;
 	}
 
-	add_fn rust_add = get_rust_add_function(rust_lib);
-	if (!rust_add)
-	{
-		unload_rust_library(rust_lib);
-		return 1;
-	}
-
 	int num1 = 20;
 	int num2 = 7;
-	int result = rust_add(num1, num2);
-
+	int result = add(num1, num2);
 	std::cout << "Result from Rust add function: " << num1 << " + " << num2 << " = " << result << std::endl;
 
-	unload_rust_library(rust_lib);
+	hello_from_rust();
+
+	freelib(rust_lib);
 
 	return 0;
 }
