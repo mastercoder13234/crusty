@@ -9,3 +9,6 @@ crusty
 
 # IDE Stuff
 .vscode
+
+#Build directory
+build

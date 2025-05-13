@@ -14,4 +14,6 @@ void test_func();
 
 int32_t gcd(int32_t left, int32_t right);
 
+bool is_prime(int32_t n);
+
 }  // extern "C"

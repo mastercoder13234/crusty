@@ -9,7 +9,7 @@ int main()
 #ifdef _WIN32
 		"rsa.dll";
 #else
-		"./librsa.so";
+		"librsa.so";
 #endif
 
 	lib_handle_t rust_lib = getlib(lib_path);
@@ -24,6 +24,8 @@ int main()
 	std::cout << "Result from Rust add function: " << num1 << " + " << num2 << " = " << result << std::endl;
 	
 	std::cout << "Greatest common demominator of 15 and 93 is: " << gcd(15,93) << std::endl;
+
+	std::cout << "True or False: Is 93287 prime? " << is_prime(93287) << std::endl;
 
 	hello_from_rust();
 
