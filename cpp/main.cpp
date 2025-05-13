@@ -22,8 +22,12 @@ int main()
 	int num2 = 7;
 	int result = add(num1, num2);
 	std::cout << "Result from Rust add function: " << num1 << " + " << num2 << " = " << result << std::endl;
+	
+	std::cout << "Greatest common demominator of 15 and 93 is: " << gcd(15,93) << std::endl;
 
 	hello_from_rust();
+
+	test_func();
 
 	freelib(rust_lib);
 

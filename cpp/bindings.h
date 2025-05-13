@@ -12,4 +12,6 @@ void hello_from_rust();
 
 void test_func();
 
+int32_t gcd(int32_t left, int32_t right);
+
 }  // extern "C"

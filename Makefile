@@ -16,7 +16,7 @@ CPP_SOURCES = cpp/main.cpp cpp/libload.cpp
 CPP_OBJECTS = $(CPP_SOURCES:.cpp=.o)
 CPP_EXECUTABLE = crusty
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -fPIC
+CXXFLAGS = -Wall -Wextra -fPIC
 
 all: $(CPP_EXECUTABLE)
 
@@ -27,7 +27,7 @@ $(RUST_LIB_NAME): $(RUST_SRC)
 	rustc --crate-type cdylib -o $@ $<
 
 $(CPP_EXECUTABLE): $(CPP_OBJECTS) $(RUST_LIB_NAME) $(BINDINGS_HEADER)
-	$(CXX) $(CPP_OBJECTS) -o $@ -L. -lrsa
+	$(CXX) $(CPP_OBJECTS) -o $@ -L. -lrsa -ldl
 
 %.o: %.cpp $(BINDINGS_HEADER)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
