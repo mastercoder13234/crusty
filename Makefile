@@ -1,4 +1,5 @@
-RUST_SRC = rsa/lib.rs
+RUST_ENTRY_FILE = rsa/lib.rs
+RUST_SRC = rsa/*.rs
 RUST_LIB_NAME_PREFIX = lib
 RUST_LIB_EXTENSION = so
 ifeq ($(OS),Windows_NT)
@@ -16,18 +17,18 @@ CPP_SOURCES = cpp/main.cpp cpp/libload.cpp
 CPP_OBJECTS = $(CPP_SOURCES:.cpp=.o)
 CPP_EXECUTABLE = crusty
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -fPIC
+CXXFLAGS = -Wall -Wextra -fPIC
 
 all: $(CPP_EXECUTABLE)
 
-$(BINDINGS_HEADER): $(RUST_SRC)
-	cbindgen --output $(BINDINGS_HEADER) --cpp-compat $(RUST_SRC)
+$(BINDINGS_HEADER): $(RUST_ENTRY_FILE) $(RUST_SRC)
+	cbindgen --output $(BINDINGS_HEADER) --cpp-compat $(RUST_ENTRY_FILE)
 
-$(RUST_LIB_NAME): $(RUST_SRC)
+$(RUST_LIB_NAME): $(RUST_ENTRY_FILE) $(RUST_SRC)
 	rustc --crate-type cdylib -o $@ $<
 
-$(CPP_EXECUTABLE): $(CPP_OBJECTS) $(RUST_LIB_NAME) $(BINDINGS_HEADER)
-	$(CXX) $(CPP_OBJECTS) -o $@ -L. -lrsa
+$(CPP_EXECUTABLE): $(CPP_OBJECTS) $(RUST_LIB_NAME)
+	$(CXX) $(CPP_OBJECTS) -o $@ -L. -lrsa -ldl -Wl,-rpath,'$$ORIGIN'
 
 %.o: %.cpp $(BINDINGS_HEADER)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -36,7 +37,7 @@ cpp/%.o: cpp/%.cpp cpp/libload.h $(BINDINGS_HEADER)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -r cpp/*.o *.a *.dll $(BINDINGS_HEADER)
+	rm -r cpp/*.o *.a *.dll $(BINDINGS_HEADER) crusty $(RUST_LIB_NAME)
 
 run: $(CPP_EXECUTABLE)
 	./$(CPP_EXECUTABLE)
