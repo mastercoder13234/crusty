@@ -14,7 +14,7 @@ pub extern "C" fn hello_from_rust() {
 
 #[no_mangle]
 pub extern "C" fn test_func() {
-    println!("It works!!!")
+    println!("It works!!!");
 }
 
 #[no_mangle]
