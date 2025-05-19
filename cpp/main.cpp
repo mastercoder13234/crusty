@@ -22,10 +22,12 @@ int main()
 	int num2 = 7;
 	int result = add(num1, num2);
 	std::cout << "Result from Rust add function: " << num1 << " + " << num2 << " = " << result << std::endl;
-	
-	std::cout << "Greatest common demominator of 15 and 93 is: " << gcd(15,93) << std::endl;
 
-	std::cout << "True or False: Is 93287 prime? " << is_prime(93287) << std::endl;
+	std::cout << "Greatest common demominator of 15 and 93 is: " << gcd(15, 93) << std::endl;
+
+	std::cout << "True or False: Is 65537 prime? " << is_prime(65537) << std::endl;
+
+	std::cout << "Random Prime: " << gen_prime() << std::endl;
 
 	hello_from_rust();
 

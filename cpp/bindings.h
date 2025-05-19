@@ -12,8 +12,10 @@ void hello_from_rust();
 
 void test_func();
 
-int32_t gcd(int32_t left, int32_t right);
+uint64_t gcd(uint64_t left, uint64_t right);
 
-bool is_prime(int32_t n);
+bool is_prime(uint64_t n);
+
+uint64_t gen_prime();
 
 }  // extern "C"
