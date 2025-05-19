@@ -1,0 +1,2 @@
+[parse]
+exclude = ["lib::PRIMES", "PRIMES"]
