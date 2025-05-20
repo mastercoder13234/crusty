@@ -24,7 +24,7 @@ CXXFLAGS = -Wall -Wextra -fPIC
 
 all: $(CPP_EXECUTABLE)
 
-$(BINDINGS_HEADER): $(RUST_ENTRY_FILE) $(RUST_SRC)
+$(BINDINGS_HEADER): $(RUST_ENTRY_FILE)
 	cbindgen --config rsa/cbindgen.toml --output $(BINDINGS_HEADER) --cpp-compat $(RUST_ENTRY_FILE)
 
 $(RUST_LIB_NAME): $(RUST_ENTRY_FILE) $(RUST_SRC)
