@@ -40,9 +40,12 @@ int main()
 	uint32_t y = 64;
 	std::cout << "Are " << x << " and " << y << " coprime? " << (is_coprime(x, y) ? "Yes" : "No") << std::endl;
 
-	hello_from_rust();
-	test_func();
+	RsaKeys rsaKeys = keygen();
 
+	std::cout << "Keygen {d,e,n}: {" << rsaKeys.d << ", " << rsaKeys.e << ", " << rsaKeys.n << "}" << std::endl;
+
+
+	
 	freelib(rust_lib);
 	return 0;
 }

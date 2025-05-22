@@ -1,12 +1,12 @@
 use crate::primes;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-struct MyRng {
+pub struct MyRng {
     state: u32,
 }
 
 impl MyRng {
-    fn new() -> Self {
+    pub fn new() -> Self {
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -18,14 +18,14 @@ impl MyRng {
         MyRng { state: seed }
     }
 
-    fn next_u32(&mut self) -> u32 {
+    pub fn next_u32(&mut self) -> u32 {
         // Use a 32-bit LCG: https://en.wikipedia.org/wiki/Linear_congruential_generator
         // Constants from Numerical Recipes
         self.state = self.state.wrapping_mul(1664525).wrapping_add(1013904223);
         self.state
     }
 
-    fn next_range(&mut self, min: u32, max: u32) -> u32 {
+    pub fn next_range(&mut self, min: u32, max: u32) -> u32 {
         let span = max - min;
         min + self.next_u32() % span
     }
@@ -77,10 +77,10 @@ pub fn is_prime(n: u32) -> bool {
 /// Generate a random prime using the improved is_prime
 pub fn gen_prime() -> u32 {
     let mut rng = MyRng::new();
-    let mut candidate = rng.next_u32() | 1; // Ensure candidate is odd
+    let mut candidate = rng.next_range(3, 65000) | 1; // Ensure candidate is odd
 
     while !is_prime(candidate) {
-        candidate = rng.next_range(3, u32::MAX) | 1;
+        candidate = rng.next_range(3, 65000) | 1;
     }
 
     candidate
@@ -93,9 +93,9 @@ pub fn modpow(base: u32, exponent: u32, modulus: u32) -> u32 {
     let mut exponent = exponent;
     while exponent > 0 {
         if exponent % 2 == 1 {
-            result = (result * base) % modulus;
+            result = ((result as u64 * base as u64) % modulus as u64) as u32;
         }
-        base = (base * base) % modulus;
+        base = ((base as u64 * base as u64) % modulus as u64) as u32;
         exponent = (exponent / 2) as u32;
     }
     return result;

@@ -4,6 +4,12 @@
 #include <ostream>
 #include <new>
 
+struct RsaKeys {
+  uint32_t e;
+  uint32_t d;
+  uint32_t n;
+};
+
 extern "C" {
 
 int32_t add(int32_t left, int32_t right);
@@ -23,5 +29,11 @@ uint32_t modpow(uint32_t base, uint32_t exponent, uint32_t modulus);
 uint32_t modinv(uint32_t a, uint32_t m);
 
 bool is_coprime(uint32_t a, uint32_t b);
+
+RsaKeys keygen();
+
+uint32_t encrypt_chunk(uint16_t message, const RsaKeys *keys);
+
+uint16_t decrypt_chunk(uint32_t encrypted, const RsaKeys *keys);
 
 }  // extern "C"
