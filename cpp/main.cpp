@@ -22,7 +22,7 @@ int main()
 
 	std::cout << "True or False: Is 65537 prime? " << is_prime(65537) << std::endl;
 
-	std::cout << "Random Prime: " << gen_prime() << std::endl;
+	std::cout << "Random Prime: " << gen_prime(1000, 65000) << std::endl;
 
 	std::cout << "Modpow(2, 3, 5): " << modpow(2, 3, 5) << std::endl;
 

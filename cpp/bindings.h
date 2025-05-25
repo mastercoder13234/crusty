@@ -22,7 +22,7 @@ uint32_t gcd(uint32_t left, uint32_t right);
 
 bool is_prime(uint32_t n);
 
-uint32_t gen_prime();
+uint32_t gen_prime(uint32_t min, uint32_t max);
 
 uint32_t modpow(uint32_t base, uint32_t exponent, uint32_t modulus);
 

@@ -12,31 +12,35 @@ pub struct RsaKeys {
 
 pub fn keygen() -> RsaKeys {
     let mut rng = helper::MyRng::new();
-    let p: u32 = helper::gen_prime();
-    let mut q: u32 = helper::gen_prime();
+    let p = helper::gen_prime(1000, u32::MAX.into());
+    let mut q = helper::gen_prime(1000, u32::MAX.into());
     while p == q {
-        q = helper::gen_prime();
+        q = helper::gen_prime(1000, u32::MAX.into());
     }
 
-    let n = (p as u64 * q as u64) as u32;
-    let phi = ((p as u64 - 1) * (q as u64 - 1)) as u32;
+    let n = p * q;
+    let phi = (p - 1) * (q - 1);
 
-    let mut e: u32 = rng.next_u32() | 1;
+    let mut e = rng.next_range(3, phi - 1) | 1;
     while !helper::is_coprime(phi, e) {
         e = rng.next_range(3, phi - 1) | 1;
     }
 
-    let d: u32 = helper::modinv(e, phi);
+    let d = helper::modinv(e, phi);
 
-    RsaKeys { e, d, n }
+    RsaKeys {
+        e: (e as u32),
+        d: (d as u32),
+        n: (n as u32),
+    }
 }
 
 fn encrypt_chunk(message: u16, keys: &RsaKeys) -> u32 {
-    helper::modpow(message as u32, keys.e, keys.n)
+    helper::modpow(message as u64, keys.e as u64, keys.n as u64) as u32
 }
 
 fn decrypt_chunk(encrypted: u32, keys: &RsaKeys) -> u16 {
-    helper::modpow(encrypted, keys.d, keys.n) as u16
+    helper::modpow(encrypted as u64, keys.d as u64, keys.n as u64) as u16
 }
 
 fn encrypt(text: &str, keys: &RsaKeys) -> Box<[u8]> {
