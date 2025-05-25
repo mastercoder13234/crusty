@@ -1,0 +1,11 @@
+# Generate C++ bindings header from Rust code
+: rsa/lib.rs |> cbindgen --config rsa/cbindgen.toml --output %o --cpp-compat %f |> cpp/bindings.h
+
+# Build Rust library
+: rsa/librsa.so |> mv %f %o |> librsa.so
+
+# Build object files from C++ sources
+: foreach cpp/*.cpp | cpp/bindings.h |> gcc -Wall -Wextra -fPIC -c %f -o %o |> cpp/%B.o
+
+# Link final executable
+: cpp/*.o librsa.so |> g++ %f -o %o -L. -l:librsa.so -ldl -Wl,-rpath,'$$ORIGIN' |> crusty

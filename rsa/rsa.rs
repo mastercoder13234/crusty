@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 use crate::helper;
 
 #[repr(C)]
@@ -18,48 +21,44 @@ pub fn keygen() -> RsaKeys {
     let n = (p as u64 * q as u64) as u32;
     let phi = ((p as u64 - 1) * (q as u64 - 1)) as u32;
 
-
     let mut e: u32 = rng.next_u32() | 1;
     while !helper::is_coprime(phi, e) {
-        e = rng.next_range(3, phi-1) | 1;
+        e = rng.next_range(3, phi - 1) | 1;
     }
 
-    let d: u32 = helper::modinv(e,phi);
+    let d: u32 = helper::modinv(e, phi);
 
     RsaKeys { e, d, n }
 }
 
-pub fn encrypt_chunk(message: u16, keys: &RsaKeys) -> u32 {
+fn encrypt_chunk(message: u16, keys: &RsaKeys) -> u32 {
     helper::modpow(message as u32, keys.e, keys.n)
 }
 
-pub fn decrypt_chunk(encrypted: u32, keys: &RsaKeys) -> u16 {
+fn decrypt_chunk(encrypted: u32, keys: &RsaKeys) -> u16 {
     helper::modpow(encrypted, keys.d, keys.n) as u16
 }
 
-pub fn bytes_to_u16(input: &[u8; 2]) -> u16 {
-    ((input[0] as u16) << 8) | (input[1] as u16)
-}
+fn encrypt(text: &str, keys: &RsaKeys) -> Box<[u8]> {
+    // Step 1: Convert to bytes
+    let mut bytes = text.as_bytes().to_vec();
 
-pub fn bytes_to_u32(input: &[u8; 4]) -> u32 {
-    ((input[0] as u32) << 24) | ((input[1] as u32) << 16) | ((input[2] as u32) << 8) | (input[3] as u32)
-}
+    // Step 2: Pad with space if length is odd
+    if bytes.len() % 2 != 0 {
+        bytes.push(b' ');
+    }
 
-pub fn u16_to_bytes(input: &u16) -> [u8; 2] {
-    let val = *input;
-    [
-        ((val >> 8) & 0xFF) as u8,
-        (val & 0xFF) as u8,
-    ]
-}
+    let mut result = Vec::with_capacity(bytes.len() * 2);
 
-pub fn u32_to_bytes(input: &u32) -> [u8; 4] {
-    let val = *input;
-    [
-        ((val >> 24) & 0xFF) as u8,
-        ((val >> 16) & 0xFF) as u8,
-        ((val >> 8) & 0xFF) as u8,
-        (val & 0xFF) as u8,
-    ]
-}
+    // Encrypt all
+    for chunk in bytes.chunks(2) {
+        let pair: [u8; 2] = [chunk[0], chunk[1]];
+        let val: u16 = helper::bytes_to_u16(&pair);
+        let encrypted: u32 = encrypt_chunk(val, keys);
+        let encrypted_bytes: [u8; 4] = helper::u32_to_bytes(&encrypted);
+        result.extend_from_slice(&encrypted_bytes);
+    }
 
+    // Return Result
+    result.into_boxed_slice()
+}

@@ -1,3 +1,7 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+#![allow(unused_assignments)]
+
 use crate::primes;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -30,7 +34,6 @@ impl MyRng {
         min + self.next_u32() % span
     }
 }
-
 
 pub fn gcd(left: u32, right: u32) -> u32 {
     let mut a = left;
@@ -88,7 +91,7 @@ pub fn gen_prime() -> u32 {
 
 // Mod Power
 pub fn modpow(base: u32, exponent: u32, modulus: u32) -> u32 {
-    let mut result: u32 = 1; 
+    let mut result: u32 = 1;
     let mut base = base;
     let mut exponent = exponent;
     while exponent > 0 {
@@ -99,7 +102,6 @@ pub fn modpow(base: u32, exponent: u32, modulus: u32) -> u32 {
         exponent = (exponent / 2) as u32;
     }
     return result;
-
 }
 
 // Extended uclidian algorithm mod inverse
@@ -107,7 +109,7 @@ pub fn modinv(a: u32, m: u32) -> u32 {
     if m == 1 {
         return 0;
     }
-    if !is_coprime(a,m){
+    if !is_coprime(a, m) {
         return 0;
     }
     let m0 = m as i64;
@@ -141,4 +143,30 @@ pub fn modinv(a: u32, m: u32) -> u32 {
 
 pub fn is_coprime(a: u32, b: u32) -> bool {
     gcd(a, b) == 1
+}
+
+pub fn bytes_to_u16(input: &[u8; 2]) -> u16 {
+    ((input[0] as u16) << 8) | (input[1] as u16)
+}
+
+pub fn bytes_to_u32(input: &[u8; 4]) -> u32 {
+    ((input[0] as u32) << 24)
+        | ((input[1] as u32) << 16)
+        | ((input[2] as u32) << 8)
+        | (input[3] as u32)
+}
+
+pub fn u16_to_bytes(input: &u16) -> [u8; 2] {
+    let val = *input;
+    [((val >> 8) & 0xFF) as u8, (val & 0xFF) as u8]
+}
+
+pub fn u32_to_bytes(input: &u32) -> [u8; 4] {
+    let val = *input;
+    [
+        ((val >> 24) & 0xFF) as u8,
+        ((val >> 16) & 0xFF) as u8,
+        ((val >> 8) & 0xFF) as u8,
+        (val & 0xFF) as u8,
+    ]
 }

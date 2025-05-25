@@ -32,8 +32,4 @@ bool is_coprime(uint32_t a, uint32_t b);
 
 RsaKeys keygen();
 
-uint32_t encrypt_chunk(uint16_t message, const RsaKeys *keys);
-
-uint16_t decrypt_chunk(uint32_t encrypted, const RsaKeys *keys);
-
 }  // extern "C"

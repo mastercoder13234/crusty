@@ -5,12 +5,7 @@
 
 int main()
 {
-	const char *lib_path =
-#ifdef _WIN32
-		"rsa.dll";
-#else
-		"librsa.so";
-#endif
+	const char *lib_path = "librsa.so";
 
 	lib_handle_t rust_lib = getlib(lib_path);
 	if (!rust_lib)
@@ -44,8 +39,6 @@ int main()
 
 	std::cout << "Keygen {d,e,n}: {" << rsaKeys.d << ", " << rsaKeys.e << ", " << rsaKeys.n << "}" << std::endl;
 
-
-	
 	freelib(rust_lib);
 	return 0;
 }
