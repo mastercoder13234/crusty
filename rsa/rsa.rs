@@ -66,3 +66,5 @@ fn encrypt(text: &str, keys: &RsaKeys) -> Box<[u8]> {
     // Return Result
     result.into_boxed_slice()
 }
+
+fn decrypt()
